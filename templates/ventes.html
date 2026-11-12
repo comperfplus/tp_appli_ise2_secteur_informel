@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block title %}Ventes{% endblock %}{% block content %}
+<h1 class="h3 mb-4">Ventes</h1>
+{% if products %}<div class="card card-body mb-4"><h2 class="h5">Enregistrer une vente</h2><form method="post" action="{{ url_for('vente_add') }}" class="row g-2 align-items-end">
+<div class="col-md-3"><label class="form-label">Date</label><input type="date" name="date_vente" value="{{ today }}" class="form-control" required></div>
+<div class="col-md-3"><label class="form-label">Produit</label><select id="product" name="id_produit" class="form-select" required><option value="">Choisir...</option>{% for p in products %}<option value="{{ p.id_produit }}" data-price="{{ p.prix_vente }}">{{ p.designation }}</option>{% endfor %}</select></div>
+<div class="col-md-2"><label class="form-label">Quantité</label><input type="number" min="1" name="quantite" class="form-control" required></div>
+<div class="col-md-2"><label class="form-label">Prix unitaire</label><input id="price" type="number" min="0" step="0.01" name="prix_unitaire" class="form-control" required></div>
+<div class="col-md-2 d-grid"><button class="btn btn-primary">Enregistrer</button></div></form><small class="text-secondary">Le prix du produit est proposé automatiquement et reste modifiable.</small></div>
+{% else %}<div class="alert alert-warning">Ajoutez d'abord un produit pour enregistrer une vente.</div>{% endif %}
+<div class="d-flex justify-content-between mb-2"><h2 class="h5">Historique</h2><strong>Total : {{ "%.2f"|format(total) }} FCFA</strong></div>
+<div class="card"><div class="table-responsive"><table class="table table-striped mb-0"><thead><tr><th>N°</th><th>Date</th><th>Produit</th><th>Quantité</th><th>Prix unitaire</th><th>Montant</th><th></th></tr></thead><tbody>
+{% for v in sales %}<tr><td>{{ v.id_vente }}</td><td>{{ v.date_vente }}</td><td>{{ v.designation }}</td><td>{{ v.quantite }}</td><td>{{ v.prix_unitaire }}</td><td>{{ v.montant }} FCFA</td><td><form method="post" action="{{ url_for('vente_delete',ident=v.id_vente) }}" onsubmit="return confirm('Supprimer cette vente ?')"><button class="btn btn-sm btn-outline-danger">Supprimer</button></form></td></tr>
+{% else %}<tr><td colspan="7" class="text-center">Aucune vente.</td></tr>{% endfor %}</tbody></table></div></div>
+<script>document.getElementById('product')?.addEventListener('change',function(){let o=this.options[this.selectedIndex];document.getElementById('price').value=o.dataset.price||'';});</script>
+{% endblock %}
